@@ -4,7 +4,7 @@
             {{-- Logo di kiri --}}
             <div class="flex items-center space-x-4">
                 {{-- <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-10 w-auto" /> --}}
-                FILAMENT STARTER
+                {{ env('APP_NAME', 'LARAVEL-STARTER') }}
             </div>
 
             {{-- Versi di kanan --}}

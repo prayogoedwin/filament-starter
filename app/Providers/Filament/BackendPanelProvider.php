@@ -31,7 +31,7 @@ class BackendPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->brandName('FILAMENT-STARTER')
+            ->brandName(env('APP_NAME', 'LARAVEL-STARTER'))
             // ->brandLogo(asset('img/logo.png'))
             // ->brandLogoHeight('4rem') // Ubah sesuai kebutuhan (3rem, 4rem, dll)
             ->favicon(asset('img/favicon_io/favicon.ico'))
