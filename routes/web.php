@@ -28,11 +28,7 @@ use App\Middleware\CheckMaintenanceMode;
 Route::middleware(CheckMaintenanceMode::class)->group(function () {
 
     Route::get('/', [PublikController::class, 'index'])->name('publik');
-    Route::get('/howtoplay', [PublikController::class, 'caraMain'])->name('cara');
     Route::get('/faq', [PublikController::class, 'faq'])->name('faq');
-    Route::get('/#fightList', [PublikController::class, 'index'])->name('prediksi');
-    Route::get('/match', [PublikController::class, 'tonton'])->name('tonton');
-    Route::get('/leaderboard', [PublikController::class, 'peringkat'])->name('peringkat');
     Route::get('/news', [PublikController::class, 'berita'])->name('berita');
     Route::get('/news/{id}', [PublikController::class, 'berita_detail'])->name('berita.detail');
     Route::get('/catalog', [PublikController::class, 'katalog'])->name('katalog');
@@ -67,11 +63,6 @@ Route::get('/maintenance', function () {
 // Login Member
 Route::prefix('member')->group(function() {
 
-  // web.php
-  Route::post('/prediksi_sekekarang/{id}', [PrediksiMember::class, 'store_server'])->name('prediksi.store');
-  Route::get('/prediksi_batal/{id_prediksi}', [PrediksiMember::class, 'delete_prediksi_server'])->name('prediksi.delete');
-
-  Route::post('/prediksi/{id}', [PrediksiController::class, 'store']);
 
   Route::get('/login/{provider}', [SocialLoginController::class, 'redirectToProvider'])->name('member.social.login');
         
@@ -95,16 +86,9 @@ Route::prefix('member')->group(function() {
   // Logout & Dashboard (dengan middleware)
   Route::get('/logout', [MemberLoginController::class, 'logout'])->name('member.logout');
 
-  Route::post('/prediksi/{id}', [PrediksiMember::class, 'store']);
-
   Route::get('/dashboard', [DashboardMember::class, 'index']) ->middleware('auth:member')->name('member.dashboard');
   Route::get('/profil', [DashboardMember::class, 'profilMember']) ->middleware('auth:member')->name('member.profil');
   Route::post('/profil_update', [DashboardMember::class, 'updateProfil']) ->middleware('auth:member')->name('member.profil_update');
-
-  Route::get('/riwayat_prdiksi', [DashboardMember::class, 'riwayatPrediksi']) ->middleware('auth:member')->name('member.riwayatprdiksi');
-  Route::get('/riwayat_tukar_poin', [DashboardMember::class, 'riwayatTukarPoin']) ->middleware('auth:member')->name('member.riwayatpoin');
-
-  Route::post('/tukarpoin', [DashboardMember::class, 'tukarPoin'])->middleware('auth:member')->name('member.tukarpoin');
 
  
 });
