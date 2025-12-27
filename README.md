@@ -5,7 +5,7 @@ Repositori ini ditujukan untuk mempermudah setup awal aplikasi dengan integrasi 
 
 ## 🚀 Fitur
 - Laravel 12.x
-- Filament Admin Panel 3.x
+- Filament Admin Panel 4.x
 - Spatie Role & Permission
 - Seeder untuk Role, Permission, dan **Super Admin User**
 
