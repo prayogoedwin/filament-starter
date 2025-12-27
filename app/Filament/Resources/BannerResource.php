@@ -2,11 +2,18 @@
 
 namespace App\Filament\Resources;
 
+use Illuminate\Database\Eloquent\Model;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\BannerResource\Pages\ListBanners;
+use App\Filament\Resources\BannerResource\Pages\CreateBanner;
+use App\Filament\Resources\BannerResource\Pages\EditBanner;
 use App\Filament\Resources\BannerResource\Pages;
 use App\Filament\Resources\BannerResource\RelationManagers;
 use App\Models\Banner;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -25,10 +32,10 @@ class BannerResource extends Resource
 {
     protected static ?string $model = Banner::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
         //setting letak grup menu
-    protected static ?string $navigationGroup = 'Web Setting';
+    protected static string | \UnitEnum | null $navigationGroup = 'Web Setting';
     protected static ?int $navigationSort = 1; // Urutan setelah Kategori
 
     // Label
@@ -45,7 +52,7 @@ class BannerResource extends Resource
         return auth()->check() && auth()->user()->can('view banners');
     }
 
-    public static function canView(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canView(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('view banners');
     }
@@ -55,12 +62,12 @@ class BannerResource extends Resource
         return auth()->check() && auth()->user()->can('create banners');
     }
 
-    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canEdit(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('edit banners');
     }
 
-    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canDelete(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('delete banners');
     }
@@ -70,10 +77,10 @@ class BannerResource extends Resource
         return auth()->check() && auth()->user()->can('delete banners');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('judul')->required(),
                  Toggle::make('status')
                         ->label('Status')
@@ -124,12 +131,12 @@ class BannerResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -144,9 +151,9 @@ class BannerResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBanners::route('/'),
-            'create' => Pages\CreateBanner::route('/create'),
-            'edit' => Pages\EditBanner::route('/{record}/edit'),
+            'index' => ListBanners::route('/'),
+            'create' => CreateBanner::route('/create'),
+            'edit' => EditBanner::route('/{record}/edit'),
         ];
     }
 }

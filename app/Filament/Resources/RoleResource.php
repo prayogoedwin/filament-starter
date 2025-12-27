@@ -2,6 +2,17 @@
 
 namespace App\Filament\Resources;
 
+use Illuminate\Database\Eloquent\Model;
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use App\Filament\Resources\RoleResource\Pages\ListRoles;
+use App\Filament\Resources\RoleResource\Pages\CreateRole;
+use App\Filament\Resources\RoleResource\Pages\EditRole;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Resources\Resource;
@@ -14,10 +25,10 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
      //setting letak grup menu
-    protected static ?string $navigationGroup = 'Sistem';
+    protected static string | \UnitEnum | null $navigationGroup = 'Sistem';
     protected static ?int $navigationSort = 2; // Urutan setelah Kategori
 
     // Label
@@ -34,7 +45,7 @@ class RoleResource extends Resource
         return auth()->check() && auth()->user()->can('view roles');
     }
 
-    public static function canView(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canView(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('view roles');
     }
@@ -44,12 +55,12 @@ class RoleResource extends Resource
         return auth()->check() && auth()->user()->can('create roles');
     }
 
-    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canEdit(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('edit roles');
     }
 
-    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canDelete(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('delete roles');
     }
@@ -59,20 +70,20 @@ class RoleResource extends Resource
         return auth()->check() && auth()->user()->can('delete roles');
     }
 
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->label('Role Name')
                     ->required(),
 
-                Forms\Components\TextInput::make('guard_name')
+                TextInput::make('guard_name')
                     ->default('web')
                     ->required(),
 
 
-                Forms\Components\Fieldset::make('Permissions for this Role')
+                Fieldset::make('Permissions for this Role')
                     ->schema(
                         self::getPermissionGroups()
                     )
@@ -102,26 +113,26 @@ class RoleResource extends Resource
 
     
 
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('guard_name'),
-                Tables\Columns\TextColumn::make('created_at')->dateTime(),
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('guard_name'),
+                TextColumn::make('created_at')->dateTime(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRoles::route('/'),
-            'create' => Pages\CreateRole::route('/create'),
-            'edit' => Pages\EditRole::route('/{record}/edit'),
+            'index' => ListRoles::route('/'),
+            'create' => CreateRole::route('/create'),
+            'edit' => EditRole::route('/{record}/edit'),
         ];
     }
 

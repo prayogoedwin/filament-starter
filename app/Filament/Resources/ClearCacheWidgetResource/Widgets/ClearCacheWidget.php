@@ -8,7 +8,7 @@ use Filament\Notifications\Notification;
 
 class ClearCacheWidget extends Widget
 {
-    protected static string $view = 'filament.resources.clear-cache-widget-resource.widgets.clear-cache-widget';
+    protected string $view = 'filament.resources.clear-cache-widget-resource.widgets.clear-cache-widget';
 
     protected int | string | array $columnSpan = 1;
 

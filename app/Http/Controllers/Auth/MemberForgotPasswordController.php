@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Exception;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -104,7 +105,7 @@ class MemberForgotPasswordController extends Controller
             });
 
             return back()->with(['status' => 'Password baru telah dikirim ke email Anda.']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return back()->withErrors(['email' => 'Gagal mengirim email. ' . $e->getMessage()]);
         }
     }

@@ -2,11 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use Illuminate\Database\Eloquent\Model;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ViewAction;
+use Illuminate\Support\HtmlString;
+use App\Filament\Resources\ActivityResource\Pages\ListActivities;
 use App\Filament\Resources\ActivityResource\Pages;
 use App\Filament\Resources\ActivityResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,10 +23,10 @@ class ActivityResource extends Resource
 {
     protected static ?string $model = Activity::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
      //setting letak grup menu
-    protected static ?string $navigationGroup = 'Sistem';
+    protected static string | \UnitEnum | null $navigationGroup = 'Sistem';
     protected static ?int $navigationSort = 1; // Urutan setelah Kategori
 
     // Label
@@ -38,7 +43,7 @@ class ActivityResource extends Resource
         return auth()->check() && auth()->user()->can('view activity_log');
     }
 
-    public static function canView(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canView(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('view activity_log');
     }
@@ -48,12 +53,12 @@ class ActivityResource extends Resource
         return auth()->check() && auth()->user()->can('create activity_log');
     }
 
-    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canEdit(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('edit activity_log');
     }
 
-    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canDelete(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('delete activity_log');
     }
@@ -63,10 +68,10 @@ class ActivityResource extends Resource
         return auth()->check() && auth()->user()->can('delete activity_log');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
             ]);
     }
@@ -75,12 +80,12 @@ class ActivityResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->label('ID')
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('log_name')
+                TextColumn::make('log_name')
                     ->label('Log Name')
                     ->sortable()
                     ->searchable()
@@ -93,10 +98,10 @@ class ActivityResource extends Resource
                         default => 'primary',
                     }),
 
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->label('Description')
                     ->limit(50)
-                    ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
+                    ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
                         if (strlen($state) <= 50) {
                             return null;
@@ -104,7 +109,7 @@ class ActivityResource extends Resource
                         return $state;
                     }),
 
-                Tables\Columns\TextColumn::make('event')
+                TextColumn::make('event')
                     ->label('Event')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -116,17 +121,17 @@ class ActivityResource extends Resource
                         default => 'primary',
                     }),
 
-                Tables\Columns\TextColumn::make('subject_type')
+                TextColumn::make('subject_type')
                     ->label('Subject Type')
                     ->formatStateUsing(fn ($state) => class_basename($state))
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('subject_id')
+                TextColumn::make('subject_id')
                     ->label('Subject ID')
                     ->sortable(),
 
                 // Menampilkan email user yang terkait dengan log
-                Tables\Columns\TextColumn::make('causer.email')
+                TextColumn::make('causer.email')
                     ->label('User Email')
                     ->sortable()
                     ->searchable()
@@ -134,27 +139,27 @@ class ActivityResource extends Resource
                     ->icon('heroicon-m-user')
                     ->iconColor('primary'),
 
-                Tables\Columns\TextColumn::make('causer_type')
+                TextColumn::make('causer_type')
                     ->label('Causer Type')
                     ->formatStateUsing(fn ($state) => $state ? class_basename($state) : 'System')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('batch_uuid')
+                TextColumn::make('batch_uuid')
                     ->label('Batch')
                     ->limit(8)
-                    ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
+                    ->tooltip(function (TextColumn $column): ?string {
                         return $column->getState();
                     })
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime('Y-m-d H:i:s')
                     ->sortable()
                     ->since()
                     ->tooltip(fn ($state) => $state->format('Y-m-d H:i:s')),
 
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label('Updated At')
                     ->dateTime('Y-m-d H:i:s')
                     ->sortable()
@@ -163,8 +168,8 @@ class ActivityResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make()
+            ->recordActions([
+                ViewAction::make()
                     ->modalHeading('Log Detail')
                     ->modalContent(function ($record) {
                         $properties = $record->properties?->toArray() ?? [];
@@ -187,11 +192,11 @@ class ActivityResource extends Resource
                         }
                         $html .= '</div>';
 
-                        return new \Illuminate\Support\HtmlString($html);
+                        return new HtmlString($html);
                     })
                     ->modalWidth('2xl'),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 //Tables\Actions\BulkActionGroup::make([
                 //Tables\Actions\DeleteBulkAction::make(),
                 //]),
@@ -208,7 +213,7 @@ class ActivityResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListActivities::route('/'),
+            'index' => ListActivities::route('/'),
             // 'create' => Pages\CreateActivity::route('/create'),
             // 'view' => Pages\ViewActivity::route('/{record}'),
             // 'edit' => Pages\EditActivity::route('/{record}/edit'),

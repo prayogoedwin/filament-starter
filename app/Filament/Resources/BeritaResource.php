@@ -2,11 +2,18 @@
 
 namespace App\Filament\Resources;
 
+use Illuminate\Database\Eloquent\Model;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\BeritaResource\Pages\ListBeritas;
+use App\Filament\Resources\BeritaResource\Pages\CreateBerita;
+use App\Filament\Resources\BeritaResource\Pages\EditBerita;
 use App\Filament\Resources\BeritaResource\Pages;
 use App\Filament\Resources\BeritaResource\RelationManagers;
 use App\Models\Berita;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -21,10 +28,10 @@ class BeritaResource extends Resource
 {
     protected static ?string $model = Berita::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
       //setting letak grup menu
-    protected static ?string $navigationGroup = 'Web Setting';
+    protected static string | \UnitEnum | null $navigationGroup = 'Web Setting';
     protected static ?int $navigationSort = 4; // Urutan setelah Kategori
 
     // Label
@@ -41,7 +48,7 @@ class BeritaResource extends Resource
         return auth()->check() && auth()->user()->can('view beritas');
     }
 
-    public static function canView(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canView(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('view beritas');
     }
@@ -51,12 +58,12 @@ class BeritaResource extends Resource
         return auth()->check() && auth()->user()->can('create beritas');
     }
 
-    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canEdit(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('edit beritas');
     }
 
-    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canDelete(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('delete beritas');
     }
@@ -66,10 +73,10 @@ class BeritaResource extends Resource
         return auth()->check() && auth()->user()->can('delete beritas');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
 
                 TextInput::make('judul')->required(),
                 RichEditor::make('deskripsi')->required()->columnSpan('full'),
@@ -107,12 +114,12 @@ class BeritaResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -127,9 +134,9 @@ class BeritaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBeritas::route('/'),
-            'create' => Pages\CreateBerita::route('/create'),
-            'edit' => Pages\EditBerita::route('/{record}/edit'),
+            'index' => ListBeritas::route('/'),
+            'create' => CreateBerita::route('/create'),
+            'edit' => EditBerita::route('/{record}/edit'),
         ];
     }
 }

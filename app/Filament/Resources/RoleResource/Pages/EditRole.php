@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\RoleResource\Pages;
 
+use Filament\Actions\DeleteAction;
+use Log;
 use App\Filament\Resources\RoleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -14,7 +16,7 @@ class EditRole extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 
@@ -34,19 +36,19 @@ class EditRole extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        \Log::info('handleRecordUpdate called with data:', $data);
+        Log::info('handleRecordUpdate called with data:', $data);
         
         $permissionIds = [];
         
         // Kumpulkan permissions dari field dinamis
         foreach ($data as $key => $value) {
             if (str_starts_with($key, 'permissions_') && is_array($value)) {
-                \Log::info("Found permission field: {$key}", $value);
+                Log::info("Found permission field: {$key}", $value);
                 $permissionIds = array_merge($permissionIds, $value);
             }
         }
         
-        \Log::info('Collected permission IDs:', $permissionIds);
+        Log::info('Collected permission IDs:', $permissionIds);
         
         // Hapus field permissions dari data
         $cleanData = collect($data)->reject(function ($value, $key) {
@@ -57,9 +59,9 @@ class EditRole extends EditRecord
         $record->update($cleanData);
         
         // Sync permissions
-        \Log::info('Syncing permissions to role ID: ' . $record->id);
+        Log::info('Syncing permissions to role ID: ' . $record->id);
         $record->permissions()->sync($permissionIds);
-        \Log::info('Permissions synced successfully');
+        Log::info('Permissions synced successfully');
         
         return $record;
     }

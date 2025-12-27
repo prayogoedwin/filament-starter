@@ -7,7 +7,7 @@ use App\Helpers\MaintenanceHelper;
 
 class MaintenanceToggle extends Widget
 {
-    protected static string $view = 'filament.widgets.maintenance-toggle';
+    protected string $view = 'filament.widgets.maintenance-toggle';
 
     public function toggleMaintenance()
     {

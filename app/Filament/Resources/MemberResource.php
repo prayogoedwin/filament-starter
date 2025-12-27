@@ -2,11 +2,20 @@
 
 namespace App\Filament\Resources;
 
+use Illuminate\Database\Eloquent\Model;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\MemberResource\Pages\ListMembers;
+use App\Filament\Resources\MemberResource\Pages\CreateMember;
+use App\Filament\Resources\MemberResource\Pages\EditMember;
 use App\Filament\Resources\MemberResource\Pages;
 use App\Filament\Resources\MemberResource\RelationManagers;
 use App\Models\Member;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,17 +26,15 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 
 class MemberResource extends Resource
 {
     protected static ?string $model = Member::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     //setting letak grup menu
-    protected static ?string $navigationGroup = 'Pengguna';
+    protected static string | \UnitEnum | null $navigationGroup = 'Pengguna';
     protected static ?int $navigationSort = 4; // Urutan setelah Kategori
 
     // Label
@@ -44,7 +51,7 @@ class MemberResource extends Resource
         return auth()->check() && auth()->user()->can('view members');
     }
 
-    public static function canView(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canView(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('view members');
     }
@@ -54,12 +61,12 @@ class MemberResource extends Resource
         return auth()->check() && auth()->user()->can('create members');
     }
 
-    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canEdit(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('edit members');
     }
 
-    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canDelete(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('delete members');
     }
@@ -69,10 +76,10 @@ class MemberResource extends Resource
         return auth()->check() && auth()->user()->can('delete members');
     }
 
-   public static function form(Form $form): Form
+   public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')->required(),
                 TextInput::make('email')
                     ->required()
@@ -174,12 +181,12 @@ class MemberResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -194,9 +201,9 @@ class MemberResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMembers::route('/'),
-            'create' => Pages\CreateMember::route('/create'),
-            'edit' => Pages\EditMember::route('/{record}/edit'),
+            'index' => ListMembers::route('/'),
+            'create' => CreateMember::route('/create'),
+            'edit' => EditMember::route('/{record}/edit'),
         ];
     }
 

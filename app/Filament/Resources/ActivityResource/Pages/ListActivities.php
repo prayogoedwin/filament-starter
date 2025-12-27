@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\ActivityResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Tabs\Tab;
 use App\Filament\Resources\ActivityResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Notifications\Notification;
 
@@ -16,7 +17,7 @@ class ListActivities extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('cleanup_old')
+            Action::make('cleanup_old')
                 ->label('Cleanup Old Logs (90+ days)')
                 ->icon('heroicon-o-trash')
                 ->color('warning')
@@ -26,7 +27,7 @@ class ListActivities extends ListRecords
                 ->modalSubmitActionLabel('Delete Old Logs')
                 ->action('cleanupOldLogs'),
                 
-            Actions\Action::make('cleanup_all')
+            Action::make('cleanup_all')
                 ->label('Delete All Logs')
                 ->icon('heroicon-o-x-circle')
                 ->color('danger')

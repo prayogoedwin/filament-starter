@@ -1,29 +1,26 @@
-<x-filament::widget>
-    <x-filament::card>
-        <div class="space-y-4">
-            <div class="flex items-center justify-between">
-                {{-- Badge Status dengan ikon --}}
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
-                    {{ $enabled ? 'bg-green-600 text-white' : 'bg-red-600 text-white' }}">
-                    
+<x-filament-widgets::widget>
+    <x-filament::section>
+        <div class="fi-section-content">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="display: inline-flex; align-items: center; font-size: 14px; font-weight: 600;">
                     @if ($enabled)
-                        <x-heroicon-o-check-circle class="w-4 h-4 mr-1 text-white" />&nbsp;
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px; margin-right: 8px; color: #16a34a;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                         ON (Aktif)
                     @else
-                        <x-heroicon-o-x-circle class="w-4 h-4 mr-1 text-white" />&nbsp;
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 20px; height: 20px; margin-right: 8px; color: #dc2626;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                         OFF (Nonaktif)
                     @endif
                 </span>
-
-                {{-- Tombol Toggle --}}
-                <form wire:submit.prevent="toggleMaintenance">
-                    <x-filament::button 
-                        type="submit" 
-                        color="{{ $enabled ? 'danger' : 'success' }}">
-                        {{ $enabled ? 'Nonaktifkan Maintenance' : 'Aktifkan Maintenance' }}
-                    </x-filament::button>
-                </form>
+                <x-filament::button 
+                    wire:click="toggleMaintenance"
+                    color="{{ $enabled ? 'danger' : 'success' }}">
+                    {{ $enabled ? 'Nonaktifkan Maintenance' : 'Aktifkan Maintenance' }}
+                </x-filament::button>
             </div>
         </div>
-    </x-filament::card>
-</x-filament::widget>
+    </x-filament::section>
+</x-filament-widgets::widget>

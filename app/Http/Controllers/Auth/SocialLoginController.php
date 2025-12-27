@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Exception;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,7 @@ class SocialLoginController extends Controller
     {
         try {
             $socialUser = Socialite::driver($provider)->user();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return redirect()->route('member.login')->withErrors('Login failed. Please try again.');
         }
 

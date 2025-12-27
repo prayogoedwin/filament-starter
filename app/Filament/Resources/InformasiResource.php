@@ -2,11 +2,18 @@
 
 namespace App\Filament\Resources;
 
+use Illuminate\Database\Eloquent\Model;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\InformasiResource\Pages\ListInformasis;
+use App\Filament\Resources\InformasiResource\Pages\CreateInformasi;
+use App\Filament\Resources\InformasiResource\Pages\EditInformasi;
 use App\Filament\Resources\InformasiResource\Pages;
 use App\Filament\Resources\InformasiResource\RelationManagers;
 use App\Models\Informasi;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -21,11 +28,11 @@ class InformasiResource extends Resource
 {
     protected static ?string $model = Informasi::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
 
     //setting letak grup menu
-    protected static ?string $navigationGroup = 'Web Setting';
+    protected static string | \UnitEnum | null $navigationGroup = 'Web Setting';
     protected static ?int $navigationSort = 3; // Urutan setelah Kategori
 
     // Label
@@ -42,7 +49,7 @@ class InformasiResource extends Resource
         return auth()->check() && auth()->user()->can('view informasis');
     }
 
-    public static function canView(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canView(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('view informasis');
     }
@@ -52,12 +59,12 @@ class InformasiResource extends Resource
         return auth()->check() && auth()->user()->can('create informasis');
     }
 
-    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canEdit(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('edit informasis');
     }
 
-    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canDelete(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('delete informasis');
     }
@@ -67,10 +74,10 @@ class InformasiResource extends Resource
         return auth()->check() && auth()->user()->can('delete informasis');
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                  TextInput::make('slug')->required(),
                  TextInput::make('nama')->required(),
                  RichEditor::make('description')->required()->columnSpan('full'),
@@ -93,12 +100,12 @@ class InformasiResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -113,9 +120,9 @@ class InformasiResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInformasis::route('/'),
-            'create' => Pages\CreateInformasi::route('/create'),
-            'edit' => Pages\EditInformasi::route('/{record}/edit'),
+            'index' => ListInformasis::route('/'),
+            'create' => CreateInformasi::route('/create'),
+            'edit' => EditInformasi::route('/{record}/edit'),
         ];
     }
 }

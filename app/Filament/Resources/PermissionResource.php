@@ -2,6 +2,14 @@
 
 namespace App\Filament\Resources;
 
+use Illuminate\Database\Eloquent\Model;
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use App\Filament\Resources\PermissionResource\Pages\ListPermissions;
+use App\Filament\Resources\PermissionResource\Pages\EditPermission;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Resources\Resource;
@@ -12,10 +20,10 @@ class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
    
-     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
      //setting letak grup menu
-    protected static ?string $navigationGroup = 'Sistem';
+    protected static string | \UnitEnum | null $navigationGroup = 'Sistem';
     protected static ?int $navigationSort = 3; // Urutan setelah Kategori
 
     // Label
@@ -32,7 +40,7 @@ class PermissionResource extends Resource
         return auth()->check() && auth()->user()->can('view permissions');
     }
 
-    public static function canView(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canView(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('view permissions');
     }
@@ -42,12 +50,12 @@ class PermissionResource extends Resource
         return auth()->check() && auth()->user()->can('create permissions');
     }
 
-    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canEdit(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('edit permissions');
     }
 
-    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    public static function canDelete(Model $record): bool
     {
         return auth()->check() && auth()->user()->can('delete permissions');
     }
@@ -58,29 +66,29 @@ class PermissionResource extends Resource
     }
 
 
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->label('Module Name (e.g., users)')
                     ->required(),
 
-                Forms\Components\TextInput::make('guard_name')
+                TextInput::make('guard_name')
                     ->default('web')
                     ->required(),
             ]);
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Name'),
-                Tables\Columns\TextColumn::make('guard_name')->label('Guard name'),
+                TextColumn::make('name')->label('Name'),
+                TextColumn::make('guard_name')->label('Guard name'),
 
                 // Kolom Menu
-                Tables\Columns\TextColumn::make('menu')
+                TextColumn::make('menu')
                     ->label('Menu')
                     ->sortable()
                     ->getStateUsing(function ($record) {
@@ -88,12 +96,12 @@ class PermissionResource extends Resource
                         return ucfirst(last(explode(' ', $record->name)));
                     }),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Created at')
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('menu')
+                SelectFilter::make('menu')
                     ->label('Menu')
                     ->options(function () {
                         return Permission::all()
@@ -110,7 +118,7 @@ class PermissionResource extends Resource
                         }
                     })
             ])
-            ->actions([
+            ->recordActions([
                 // Tables\Actions\EditAction::make(),
                 // Tables\Actions\DeleteAction::make(),
             ]);
@@ -119,9 +127,9 @@ class PermissionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPermissions::route('/'),
+            'index' => ListPermissions::route('/'),
             // 'create' => Pages\CreatePermission::route('/create'),
-            'edit' => Pages\EditPermission::route('/{record}/edit'),
+            'edit' => EditPermission::route('/{record}/edit'),
         ];
     }
 }
